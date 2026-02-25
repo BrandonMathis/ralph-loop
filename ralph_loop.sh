@@ -6,6 +6,16 @@ TASK_FILE="/tmp/CLAUDE_TASK"
 
 rm -f "$STATUS_FILE" "$TASK_FILE"
 
+cleanup() {
+  echo "Interrupted. Stopping loop."
+  kill "$CLAUDE_PID" 2>/dev/null
+  kill "$WATCHER_PID" 2>/dev/null
+  wait "$CLAUDE_PID" 2>/dev/null
+  wait "$WATCHER_PID" 2>/dev/null
+  exit 1
+}
+trap cleanup INT TERM
+
 while true; do
   # Check for stop condition before running
   if [[ -f "$STATUS_FILE" ]] && [[ "$(cat "$STATUS_FILE")" == "done" ]]; then
@@ -22,7 +32,10 @@ while true; do
   echo "--- Running claude loop iteration ---"
 
   # Template-expand the prompt, replacing ${STATUS_FILE}, ${TASK_FILE}, etc.
-  EXPANDED_PROMPT=$(STATUS_FILE="$STATUS_FILE" TASK_FILE="$TASK_FILE" envsubst < "$PROMPT_FILE")
+  EXPANDED_PROMPT=$(sed \
+    -e "s|\${STATUS_FILE}|${STATUS_FILE}|g" \
+    -e "s|\${TASK_FILE}|${TASK_FILE}|g" \
+    "$PROMPT_FILE")
 
   # Run claude in background to capture PID
   claude --dangerously-skip-permissions <<< "$EXPANDED_PROMPT" &
@@ -49,10 +62,11 @@ while true; do
 
   # Wait for claude to finish (naturally or killed by watcher)
   wait "$CLAUDE_PID"
+  CLAUDE_EXIT=$?
 
-  # Kill watcher if still running
-  kill "$WATCHER_PID" 2>/dev/null
-  wait "$WATCHER_PID" 2>/dev/null
+  if [[ $CLAUDE_EXIT -eq 0 ]]; then
+    cleanup
+  fi
 
   # Check for stop condition after running
   if [[ -f "$STATUS_FILE" ]] && [[ "$(cat "$STATUS_FILE")" == "done" ]]; then
