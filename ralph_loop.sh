@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 PROMPT_FILE="Prompt.md"
-STATUS_FILE="CLAUDE_STATUS"
-TASK_FILE="CLAUDE_TASK"
+STATUS_FILE="/tmp/CLAUDE_STATUS"
+TASK_FILE="/tmp/CLAUDE_TASK"
 
 rm -f "$STATUS_FILE" "$TASK_FILE"
 
@@ -21,8 +21,11 @@ while true; do
   rm -f "$STATUS_FILE"
   echo "--- Running claude loop iteration ---"
 
+  # Template-expand the prompt, replacing ${STATUS_FILE}, ${TASK_FILE}, etc.
+  EXPANDED_PROMPT=$(STATUS_FILE="$STATUS_FILE" TASK_FILE="$TASK_FILE" envsubst < "$PROMPT_FILE")
+
   # Run claude in background to capture PID
-  claude --dangerously-skip-permissions < "$PROMPT_FILE" &
+  claude --dangerously-skip-permissions <<< "$EXPANDED_PROMPT" &
   CLAUDE_PID=$!
 
   # Start watcher sub-loop in background
