@@ -6,10 +6,10 @@ You are to execute the following steps:
 3. Update this Prompt.md and check that task off on the list
 4. Write "done" to the file `${TASK_FILE}`
 
-If there are no unchecked tasks remaining, write the text `done` to the file `${STATUS_FILE}` using the Bash tool.
+If there are no unchecked tasks remaining, write the text "done" to the file `${STATUS_FILE}` using the Bash tool.
 
 ## Tasks
-- [ ] Make a file
-- [ ] Put a program in the file made from the previous task
-- [ ] Run the program
+- [x] Make a file
+- [x] Put a "Hello World" program in the file made from the previous task
+- [x] Run the program
 
