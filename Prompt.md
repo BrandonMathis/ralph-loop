@@ -9,7 +9,7 @@ You are to execute the following steps:
 If there are no unchecked tasks remaining, write the text "done" to the file `${STATUS_FILE}` using the Bash tool.
 
 ## Tasks
-- [x] Make a file
-- [x] Put a "Hello World" program in the file made from the previous task
-- [x] Run the program
+- [ ] Make a file
+- [ ] Put a "Hello World" program in the file made from the previous task
+- [ ] Run the program
 
