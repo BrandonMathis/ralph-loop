@@ -2,6 +2,8 @@
 
 A command line utility that runs Claude Code CLI in a loop to work tasks one by one from a Prompt.md
 
+⚠️ The ./start_claude_loop.sh runs claude code with the [`--dangerously-skip-permissions`]([url](https://code.claude.com/docs/en/settings#permission-settings)) flag enabled. Please proceed with caution.
+
 ## Project Goals
 1. Can be cloned down and run with minimal setup
 1. This project can work in existing repos with minimal configuration
